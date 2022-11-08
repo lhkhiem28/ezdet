@@ -31,6 +31,12 @@ optimizer = optim.Adam(
     lr = model.hyperparams["lr"], weight_decay = model.hyperparams["weight_decay"], 
 )
 
+wandb.login()
+wandb.init(
+    mode = "disabled", 
+    project = "ezdet", name = "vanilla", 
+)
+
 save_ckp_dir = "../ckps/VOC2007"
 if not os.path.exists(save_ckp_dir):
     os.makedirs(save_ckp_dir)
@@ -41,3 +47,4 @@ train_fn(
     optimizer = optimizer, 
     save_ckp_dir = save_ckp_dir, 
 )
+wandb.close()

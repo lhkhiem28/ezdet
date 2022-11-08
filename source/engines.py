@@ -31,6 +31,12 @@ def train_fn(
 
             running_loss = running_loss + loss.item()*images.size(0)
         epoch_loss = running_loss/len(train_loaders["train"].dataset)
+        wandb.log(
+            {
+                "train_loss":epoch_loss, 
+            }, 
+            step = epoch, 
+        )
         if training_verbose:
             print("{:<5} - loss:{:.4f}".format(
                 "train", 
@@ -43,7 +49,7 @@ def train_fn(
             for images, labels in tqdm.tqdm(train_loaders["val"], disable = not training_verbose):
                 images, labels = images.cuda(), labels.cuda()
                 labels[:, 2:] = xywh2xyxy(labels[:, 2:])
-                labels[:, 2:] = labels[:, 2:]*int(train_loaders["val"].dataset.image_size[0])
+                labels[:, 2:] = labels[:, 2:]*int(train_loaders["val"].dataset.image_size)
 
                 logits = model(images)
                 logits = non_max_suppression(
@@ -60,6 +66,12 @@ def train_fn(
                 np.concatenate(stats, 0) for stats in list(zip(*running_statistics))
             ], running_classes
         )[2].mean()
+        wandb.log(
+            {
+                "val_map":epoch_map, 
+            }, 
+            step = epoch, 
+        )
         if training_verbose:
             print("{:<5} -  map:{:.4f}".format(
                 "val", 

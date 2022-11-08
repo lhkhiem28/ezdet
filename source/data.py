@@ -5,10 +5,12 @@ from libs import *
 class DetImageDataset(torch.utils.data.Dataset):
     def __init__(self, 
         images_path, labels_path, 
-        image_size = (320, 320), 
+        image_size = 320, 
+        multiscale = False, 
     ):
         self.image_files, self.label_files,  = sorted(glob.glob(images_path + "/*")), sorted(glob.glob(labels_path + "/*")), 
         self.image_size = image_size
+        self.multiscale = multiscale
 
     def __len__(self, 
     ):
@@ -24,14 +26,20 @@ class DetImageDataset(torch.utils.data.Dataset):
         else:
             pad = (0, 0, gap_pad // 2, gap_pad - gap_pad // 2)
 
-        image = F.pad(image, pad, value = 0)
+        image = F.pad(
+            image, 
+            pad, value = 0, 
+        )
         return image, [0] + list(pad)
 
     def __getitem__(self, 
         index, 
     ):
         image_file, label_file,  = self.image_files[index], self.label_files[index], 
-        image = cv2.cvtColor(cv2.imread(image_file), code = cv2.COLOR_BGR2RGB)
+        image = cv2.cvtColor(
+            cv2.imread(image_file), 
+            code = cv2.COLOR_BGR2RGB, 
+        )
         image = torch.tensor(image).permute(2, 0, 1)
         _, h, w,  = image.shape
         image, pad = self.square_pad(image)
@@ -46,7 +54,22 @@ class DetImageDataset(torch.utils.data.Dataset):
         batch, 
     ):
         images, labels = list(zip(*batch))
-        images = torch.stack([F.interpolate(image.unsqueeze(0), self.image_size, mode = "nearest").squeeze(0) for image in images])/255
+        if self.multiscale and random.random() > 0.9:
+            inbatch_image_size = self.image_size + 32*np.random.choice(
+                [
+                    -3, -2, -1, 0, +1, +2, +3, 
+                ]
+            )
+        else:
+            inbatch_image_size = self.image_size
+        images = torch.stack(
+            [
+                F.interpolate(
+                    image.unsqueeze(0), 
+                    inbatch_image_size, mode = "nearest", 
+                ).squeeze(0) for image in images
+            ]
+        )/255
 
         labels = [bboxes for bboxes in labels if bboxes is not None]
         for i, bboxes in enumerate(labels):

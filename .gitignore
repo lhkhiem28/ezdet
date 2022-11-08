@@ -1,4 +1,8 @@
+
 /datasets
+/ckps
+
 **/darknet53.conv.74
 
 **/__pycache__
+**/nohup.out
