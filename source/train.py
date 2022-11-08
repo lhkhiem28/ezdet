@@ -2,6 +2,7 @@
 import os, sys
 from libs import *
 from data import DetImageDataset
+from engines import train_fn
 
 datasets = {
     "train":DetImageDataset(
@@ -14,12 +15,12 @@ datasets = {
 train_loaders = {
     "train":torch.utils.data.DataLoader(
         datasets["train"], collate_fn = datasets["train"].collate_fn, 
-        num_workers = 8, batch_size = 8, 
+        num_workers = 8, batch_size = 48, 
         shuffle = True
     ), 
     "val":torch.utils.data.DataLoader(
         datasets["val"], collate_fn = datasets["val"].collate_fn, 
-        num_workers = 8, batch_size = 8, 
+        num_workers = 8, batch_size = 48, 
         shuffle = True
     ), 
 }
@@ -33,3 +34,10 @@ optimizer = optim.Adam(
 save_ckp_dir = "../ckps/VOC2007"
 if not os.path.exists(save_ckp_dir):
     os.makedirs(save_ckp_dir)
+train_fn(
+    train_loaders, 
+    model, 
+    num_epochs = 300, 
+    optimizer = optimizer, 
+    save_ckp_dir = save_ckp_dir, 
+)

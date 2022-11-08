@@ -1,2 +1,4 @@
 /datasets
 **/darknet53.conv.74
+
+**/__pycache__

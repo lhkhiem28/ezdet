@@ -3,7 +3,7 @@ import os, sys
 import warnings; warnings.filterwarnings("ignore")
 import pytorch_lightning; pytorch_lightning.seed_everything(22)
 
-from tqdm import tqdm
+import tqdm
 
 import argparse
 import glob

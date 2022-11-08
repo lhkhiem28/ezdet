@@ -40,7 +40,7 @@ class DetImageDataset(torch.utils.data.Dataset):
         bboxes = np.loadtxt(label_file).reshape(-1, 5)
         c1, c2, c3, c4,  = w*(bboxes[:, 1] - bboxes[:, 3]/2) + pad[1], w*(bboxes[:, 1] + bboxes[:, 3]/2) + pad[2], h*(bboxes[:, 2] - bboxes[:, 4]/2) + pad[3], h*(bboxes[:, 2] + bboxes[:, 4]/2) + pad[4], 
         bboxes[:, 1], bboxes[:, 2], bboxes[:, 3], bboxes[:, 4],  = ((c1 + c2)/2)/padded_w, ((c3 + c4)/2)/padded_h, bboxes[:, 3]*(w/padded_w), bboxes[:, 4]*(h/padded_h), 
-        return image, F.pad(torch.tensor(bboxes), (1, 0, 0, 0), value = 0)
+        return image.float(), F.pad(torch.tensor(bboxes), (1, 0, 0, 0), value = 0)
 
     def collate_fn(self, 
         batch, 
