@@ -7,7 +7,7 @@ from engines import train_fn
 datasets = {
     "train":DetImageDataset(
         images_path = "../datasets/VOC2007/train/images", labels_path = "../datasets/VOC2007/train/labels", 
-        image_size = 320, rescale_rate = 0.2, 
+        image_size = 320, 
     ), 
     "val":DetImageDataset(
         images_path = "../datasets/VOC2007/train/images", labels_path = "../datasets/VOC2007/train/labels", 
@@ -17,11 +17,13 @@ datasets = {
 train_loaders = {
     "train":torch.utils.data.DataLoader(
         datasets["train"], collate_fn = datasets["train"].collate_fn, 
-        num_workers = 8, batch_size = 32, shuffle = True, 
+        num_workers = 8, batch_size = 48, 
+        shuffle = True
     ), 
     "val":torch.utils.data.DataLoader(
         datasets["val"], collate_fn = datasets["val"].collate_fn, 
-        num_workers = 8, batch_size = 32, 
+        num_workers = 8, batch_size = 48, 
+        shuffle = True
     ), 
 }
 model = Darknet("nets/yolov3.cfg")

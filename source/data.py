@@ -5,10 +5,10 @@ from libs import *
 class DetImageDataset(torch.utils.data.Dataset):
     def __init__(self, 
         images_path, labels_path, 
-        image_size = 320, rescale_rate = 0.0, 
+        image_size = 320, 
     ):
         self.image_files, self.label_files,  = sorted(glob.glob(images_path + "/*")), sorted(glob.glob(labels_path + "/*")), 
-        self.image_size, self.rescale_rate,  = image_size, rescale_rate, 
+        self.image_size = image_size
 
     def __len__(self, 
     ):
@@ -52,22 +52,16 @@ class DetImageDataset(torch.utils.data.Dataset):
         batch, 
     ):
         images, labels = list(zip(*batch))
-        image_size = self.image_size
-        if np.random.random() < self.rescale_rate:
-            image_size = image_size + 32*np.random.choice([
-                -3, -2, -1, 0, +1, +2, +3, 
-            ])
         images = torch.stack([
             F.interpolate(
                 image.unsqueeze(0), 
-                image_size, mode = "nearest", 
+                self.image_size, mode = "nearest", 
             ).squeeze(0) for image in images
         ])
         images = images/255
 
         labels = [bboxes for bboxes in labels if bboxes is not None]
-        for i, bboxes in enumerate(labels):
-            bboxes[:, 0] = i
-        if len(labels) != 0:
-            labels = torch.cat(labels)
+        for index, bboxes in enumerate(labels):
+            bboxes[:, 0] = index
+        if len(labels) != 0:labels = torch.cat(labels)
         return images, labels
