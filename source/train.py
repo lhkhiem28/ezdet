@@ -7,21 +7,21 @@ from engines import train_fn
 datasets = {
     "train":DetImageDataset(
         images_path = "../datasets/VOC2007/train/images", labels_path = "../datasets/VOC2007/train/labels", 
+        image_size = 320, rescale_rate = 0.2, 
     ), 
     "val":DetImageDataset(
         images_path = "../datasets/VOC2007/train/images", labels_path = "../datasets/VOC2007/train/labels", 
+        image_size = 320, 
     ), 
 }
 train_loaders = {
     "train":torch.utils.data.DataLoader(
         datasets["train"], collate_fn = datasets["train"].collate_fn, 
-        num_workers = 8, batch_size = 48, 
-        shuffle = True
+        num_workers = 8, batch_size = 32, shuffle = True, 
     ), 
     "val":torch.utils.data.DataLoader(
         datasets["val"], collate_fn = datasets["val"].collate_fn, 
-        num_workers = 8, batch_size = 48, 
-        shuffle = True
+        num_workers = 8, batch_size = 32, 
     ), 
 }
 model = Darknet("nets/yolov3.cfg")
@@ -33,10 +33,9 @@ optimizer = optim.Adam(
 
 wandb.login()
 wandb.init(
-    mode = "disabled", 
+    # mode = "disabled", 
     project = "ezdet", name = "vanilla", 
 )
-
 save_ckp_dir = "../ckps/VOC2007"
 if not os.path.exists(save_ckp_dir):
     os.makedirs(save_ckp_dir)
