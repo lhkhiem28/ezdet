@@ -32,6 +32,10 @@ optimizer = optim.Adam(
     model.parameters(), 
     lr = model.hyperparams["lr"], weight_decay = model.hyperparams["weight_decay"], 
 )
+scheduler = optim.lr_scheduler.CosineAnnealingLR(
+    optimizer, 
+    eta_min = 0.01*model.hyperparams["lr"], T_max = int(0.9*300), 
+)
 
 wandb.login()
 wandb.init(
@@ -46,6 +50,7 @@ train_fn(
     model, 
     num_epochs = 300, 
     optimizer = optimizer, 
+    scheduler = scheduler, 
     save_ckp_dir = save_ckp_dir, 
 )
 wandb.close()

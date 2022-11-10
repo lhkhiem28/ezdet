@@ -7,6 +7,7 @@ def train_fn(
     model, 
     num_epochs, 
     optimizer, 
+    scheduler, 
     save_ckp_dir = "./", 
     training_verbose = True, 
 ):
@@ -29,7 +30,17 @@ def train_fn(
             )[0]
 
             loss.backward()
-            optimizer.step(), optimizer.zero_grad()
+            if epoch < int(0.1*num_epochs):
+                for param_group in optimizer.param_groups:
+                    param_group["lr"] = model.hyperparams["lr"]*epoch/(int(0.1*num_epochs))
+                optimizer.step(), optimizer.zero_grad()
+            else:
+                scheduler.step()
+                optimizer.step(), optimizer.zero_grad()
+            wandb.log(
+                {"lr":optimizer.param_groups[0]["lr"]}, 
+                step = epoch, 
+            )
 
             running_loss = running_loss + loss.item()*images.size(0)
         train_loss = running_loss/len(train_loaders["train"].dataset)
