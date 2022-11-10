@@ -10,7 +10,7 @@ datasets = {
         image_size = 320, 
     ), 
     "val":DetImageDataset(
-        images_path = "../datasets/VOC2007/train/images", labels_path = "../datasets/VOC2007/train/labels", 
+        images_path = "../datasets/VOC2007/val/images", labels_path = "../datasets/VOC2007/val/labels", 
         image_size = 320, 
     ), 
 }
@@ -34,7 +34,7 @@ optimizer = optim.Adam(
 )
 scheduler = optim.lr_scheduler.CosineAnnealingLR(
     optimizer, 
-    eta_min = 0.01*model.hyperparams["lr"], T_max = int(0.9*300), 
+    eta_min = 0.001*model.hyperparams["lr"], T_max = int(0.9*120), 
 )
 
 wandb.login()
@@ -48,7 +48,7 @@ if not os.path.exists(save_ckp_dir):
 train_fn(
     train_loaders, 
     model, 
-    num_epochs = 300, 
+    num_epochs = 120, 
     optimizer = optimizer, 
     scheduler = scheduler, 
     save_ckp_dir = save_ckp_dir, 
