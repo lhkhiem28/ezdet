@@ -18,6 +18,17 @@ def train_fn(
     for epoch in tqdm.tqdm(range(1, num_epochs + 1), disable = training_verbose):
         if training_verbose:
             print("epoch {:2}/{:2}".format(epoch, num_epochs) + "\n" + "-"*16)
+
+        if epoch <= int(0.1*num_epochs):
+            for param_group in optimizer.param_groups:
+                param_group["lr"] = model.hyperparams["lr"]*epoch/(int(0.1*num_epochs))
+        else:
+            scheduler.step()
+        wandb.log(
+            {"lr":optimizer.param_groups[0]["lr"]}, 
+            step = epoch, 
+        )
+
         model.train()
         running_loss = 0.0
         for images, labels in tqdm.tqdm(train_loaders["train"], disable = not training_verbose):
@@ -30,17 +41,7 @@ def train_fn(
             )[0]
 
             loss.backward()
-            if epoch < int(0.1*num_epochs):
-                for param_group in optimizer.param_groups:
-                    param_group["lr"] = model.hyperparams["lr"]*epoch/(int(0.1*num_epochs))
-                optimizer.step(), optimizer.zero_grad()
-            else:
-                scheduler.step()
-                optimizer.step(), optimizer.zero_grad()
-            wandb.log(
-                {"lr":optimizer.param_groups[0]["lr"]}, 
-                step = epoch, 
-            )
+            optimizer.step(), optimizer.zero_grad()
 
             running_loss = running_loss + loss.item()*images.size(0)
         train_loss = running_loss/len(train_loaders["train"].dataset)
