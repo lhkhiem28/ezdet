@@ -18,12 +18,7 @@ def train_fn(
     for epoch in tqdm.tqdm(range(1, num_epochs + 1), disable = training_verbose):
         if training_verbose:
             print("epoch {:2}/{:2}".format(epoch, num_epochs) + "\n" + "-"*16)
-
-        if epoch <= int(0.1*num_epochs):
-            for param_group in optimizer.param_groups:
-                param_group["lr"] = model.hyperparams["lr"]*epoch/(int(0.1*num_epochs))
-        else:
-            scheduler.step()
+        scheduler.step()
         wandb.log(
             {"lr":optimizer.param_groups[0]["lr"]}, 
             step = epoch, 
@@ -81,4 +76,4 @@ def train_fn(
         if training_verbose:
             print("val - map:{:.4f}".format(val_map))
         if best_map < val_map:
-            best_map = val_map; torch.save(model, "{}/best.ptl".format(save_ckp_dir))
+            best_map = val_map; torch.save(model, "{}/yolov3-tiny.ptl".format(save_ckp_dir))

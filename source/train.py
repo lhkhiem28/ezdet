@@ -26,21 +26,21 @@ train_loaders = {
         shuffle = True
     ), 
 }
-model = Darknet("nets/yolov3.cfg")
-model.load_darknet_weights("nets/darknet53.conv.74")
+model = Darknet("nets/yolov3-tiny.cfg")
+model.load_darknet_weights("../ckps/darknet53.conv.74")
 optimizer = optim.Adam(
     model.parameters(), 
     lr = model.hyperparams["lr"], weight_decay = model.hyperparams["weight_decay"], 
 )
-scheduler = optim.lr_scheduler.CosineAnnealingLR(
+scheduler = optim.lr_scheduler.MultiStepLR(
     optimizer, 
-    eta_min = 0.001*model.hyperparams["lr"], T_max = int(0.9*120), 
+    milestones = [60, 90], gamma = 0.1, 
 )
 
 wandb.login()
 wandb.init(
     # mode = "disabled", 
-    project = "ezdet", name = "vanilla", 
+    project = "ezdet", name = "yolov3-tiny", 
 )
 save_ckp_dir = "../ckps/VOC2007"
 if not os.path.exists(save_ckp_dir):
@@ -48,7 +48,7 @@ if not os.path.exists(save_ckp_dir):
 train_fn(
     train_loaders, 
     model, 
-    num_epochs = 120, 
+    num_epochs = 160, 
     optimizer = optimizer, 
     scheduler = scheduler, 
     save_ckp_dir = save_ckp_dir, 
