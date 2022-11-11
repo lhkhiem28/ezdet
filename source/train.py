@@ -32,9 +32,9 @@ optimizer = optim.Adam(
     model.parameters(), 
     lr = model.hyperparams["lr"], weight_decay = model.hyperparams["weight_decay"], 
 )
-scheduler = optim.lr_scheduler.MultiStepLR(
+lr_scheduler = optim.lr_scheduler.CosineAnnealingLR(
     optimizer, 
-    milestones = [60, 90], gamma = 0.1, 
+    eta_min = 0.01*model.hyperparams["lr"], T_max = int(0.9*int(model.hyperparams["num_epochs"])), 
 )
 
 wandb.login()
@@ -48,9 +48,9 @@ if not os.path.exists(save_ckp_dir):
 train_fn(
     train_loaders, 
     model, 
-    num_epochs = 160, 
+    num_epochs = int(model.hyperparams["num_epochs"]), 
     optimizer = optimizer, 
-    scheduler = scheduler, 
+    lr_scheduler = lr_scheduler, 
     save_ckp_dir = save_ckp_dir, 
 )
 wandb.finish()

@@ -7,7 +7,7 @@ def train_fn(
     model, 
     num_epochs, 
     optimizer, 
-    scheduler, 
+    lr_scheduler, 
     save_ckp_dir = "./", 
     training_verbose = True, 
 ):
@@ -18,12 +18,15 @@ def train_fn(
     for epoch in tqdm.tqdm(range(1, num_epochs + 1), disable = training_verbose):
         if training_verbose:
             print("epoch {:2}/{:2}".format(epoch, num_epochs) + "\n" + "-"*16)
-        scheduler.step()
+        if epoch <= int(0.1*num_epochs):
+            for param_group in optimizer.param_groups:
+                param_group["lr"] = model.hyperparams["lr"]*epoch/(int(0.1*num_epochs))
+        else:
+            lr_scheduler.step()
         wandb.log(
             {"lr":optimizer.param_groups[0]["lr"]}, 
             step = epoch, 
         )
-
         model.train()
         running_loss = 0.0
         for images, labels in tqdm.tqdm(train_loaders["train"], disable = not training_verbose):
@@ -58,7 +61,7 @@ def train_fn(
                 logits = model(images)
                 logits = non_max_suppression(
                     logits, 
-                    conf_thres = 0.001, iou_thres = 0.5, 
+                    conf_thres = 0.1, iou_thres = 0.5, 
                 )
 
                 running_classes, running_statistics = running_classes + labels[:, 1].tolist(), running_statistics + get_batch_statistics(
