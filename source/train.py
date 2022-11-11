@@ -26,7 +26,7 @@ train_loaders = {
         shuffle = True
     ), 
 }
-model = Darknet("nets/yolov3-tiny.cfg")
+model = Darknet("nets/yolov3.cfg")
 model.load_darknet_weights("../ckps/darknet53.conv.74")
 optimizer = optim.Adam(
     model.parameters(), 
@@ -39,8 +39,8 @@ scheduler = optim.lr_scheduler.MultiStepLR(
 
 wandb.login()
 wandb.init(
-    # mode = "disabled", 
-    project = "ezdet", name = "yolov3-tiny", 
+    mode = "disabled", 
+    project = "ezdet", name = "yolov3", 
 )
 save_ckp_dir = "../ckps/VOC2007"
 if not os.path.exists(save_ckp_dir):
@@ -53,4 +53,4 @@ train_fn(
     scheduler = scheduler, 
     save_ckp_dir = save_ckp_dir, 
 )
-wandb.close()
+wandb.finish()

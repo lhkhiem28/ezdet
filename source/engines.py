@@ -58,7 +58,7 @@ def train_fn(
                 logits = model(images)
                 logits = non_max_suppression(
                     logits, 
-                    conf_thres = 0.1, iou_thres = 0.5, 
+                    conf_thres = 0.001, iou_thres = 0.5, 
                 )
 
                 running_classes, running_statistics = running_classes + labels[:, 1].tolist(), running_statistics + get_batch_statistics(
@@ -76,4 +76,4 @@ def train_fn(
         if training_verbose:
             print("val - map:{:.4f}".format(val_map))
         if best_map < val_map:
-            best_map = val_map; torch.save(model, "{}/yolov3-tiny.ptl".format(save_ckp_dir))
+            best_map = val_map; torch.save(model, "{}/yolov3.ptl".format(save_ckp_dir))
