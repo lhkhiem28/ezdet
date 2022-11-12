@@ -6,9 +6,17 @@ class DetImageDataset(torch.utils.data.Dataset):
     def __init__(self, 
         images_path, labels_path, 
         image_size = 416, 
+        augment = False, 
     ):
         self.image_files, self.label_files,  = sorted(glob.glob(images_path + "/*")), sorted(glob.glob(labels_path + "/*")), 
         self.image_size = image_size
+        self.augment = augment
+        self.transforms = A.Compose(
+            [
+                A.HorizontalFlip(p = 0.5), 
+            ], 
+            A.BboxParams("yolo", ["classes"])
+        )
 
     def __len__(self, 
     ):
@@ -35,8 +43,11 @@ class DetImageDataset(torch.utils.data.Dataset):
     ):
         image_file, label_file,  = self.image_files[index], self.label_files[index], 
         image = cv2.imread(image_file)
-        image = cv2.cvtColor(image, code = cv2.COLOR_BGR2RGB)
-        image = torch.tensor(image).permute(2, 0, 1)
+        image = torch.tensor(cv2.cvtColor(
+            image, 
+            code = cv2.COLOR_BGR2RGB, 
+        ))
+        image = image.permute(2, 0, 1)
         _, h, w = image.shape
         image, pad = self.square_pad(image); _, padded_h, padded_w = image.shape
 
