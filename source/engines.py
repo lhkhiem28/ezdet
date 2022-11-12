@@ -18,9 +18,9 @@ def train_fn(
     for epoch in tqdm.tqdm(range(1, num_epochs + 1), disable = training_verbose):
         if training_verbose:
             print("epoch {:2}/{:2}".format(epoch, num_epochs) + "\n" + "-"*16)
-        if epoch <= int(0.1*num_epochs):
+        if epoch <= int(0.2*num_epochs):
             for param_group in optimizer.param_groups:
-                param_group["lr"] = model.hyperparams["lr"]*epoch/(int(0.1*num_epochs))
+                param_group["lr"] = model.hyperparams["lr"]*epoch/(int(0.2*num_epochs))
         else:
             lr_scheduler.step()
         wandb.log(
