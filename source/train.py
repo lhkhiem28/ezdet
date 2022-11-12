@@ -6,11 +6,11 @@ from engines import train_fn
 
 datasets = {
     "train":DetImageDataset(
-        images_path = "../datasets/VOC2007/train/images", labels_path = "../datasets/VOC2007/train/labels", 
+        images_path = "../datasets/VOC2012/train/images", labels_path = "../datasets/VOC2012/train/labels", 
         image_size = 320, 
     ), 
     "val":DetImageDataset(
-        images_path = "../datasets/VOC2007/val/images", labels_path = "../datasets/VOC2007/val/labels", 
+        images_path = "../datasets/VOC2007/test/images", labels_path = "../datasets/VOC2007/test/labels", 
         image_size = 320, 
     ), 
 }
@@ -39,7 +39,7 @@ lr_scheduler = optim.lr_scheduler.CosineAnnealingLR(
 
 wandb.login()
 wandb.init(
-    mode = "disabled", 
+    # mode = "disabled", 
     project = "ezdet", name = "yolov3", 
 )
 save_ckp_dir = "../ckps/VOC2007"
