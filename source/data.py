@@ -5,7 +5,7 @@ from libs import *
 class DetImageDataset(torch.utils.data.Dataset):
     def __init__(self, 
         images_path, labels_path, 
-        image_size = 320, 
+        image_size = 416, 
     ):
         self.image_files, self.label_files,  = sorted(glob.glob(images_path + "/*")), sorted(glob.glob(labels_path + "/*")), 
         self.image_size = image_size

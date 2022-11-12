@@ -6,23 +6,23 @@ from engines import train_fn
 
 datasets = {
     "train":DetImageDataset(
-        images_path = "../datasets/VOC2012/train/images", labels_path = "../datasets/VOC2012/train/labels", 
-        image_size = 320, 
+        images_path = "../datasets/VOC2007/train/images", labels_path = "../datasets/VOC2007/train/labels", 
+        image_size = 416, 
     ), 
     "val":DetImageDataset(
-        images_path = "../datasets/VOC2007/test/images", labels_path = "../datasets/VOC2007/test/labels", 
-        image_size = 320, 
+        images_path = "../datasets/VOC2007/val/images", labels_path = "../datasets/VOC2007/val/labels", 
+        image_size = 416, 
     ), 
 }
 train_loaders = {
     "train":torch.utils.data.DataLoader(
         datasets["train"], collate_fn = datasets["train"].collate_fn, 
-        num_workers = 8, batch_size = 48, 
+        num_workers = 8, batch_size = 32, 
         shuffle = True
     ), 
     "val":torch.utils.data.DataLoader(
         datasets["val"], collate_fn = datasets["val"].collate_fn, 
-        num_workers = 8, batch_size = 48, 
+        num_workers = 8, batch_size = 32, 
         shuffle = True
     ), 
 }
