@@ -4,14 +4,18 @@ from libs import *
 from data import DetImageDataset
 from engines import train_fn
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--dataset", type = str)
+args = parser.parse_args()
+
 datasets = {
     "train":DetImageDataset(
-        images_path = "../datasets/VOC2007/train/images", labels_path = "../datasets/VOC2007/train/labels", 
+        images_path = "../datasets/{}/train/images".format(args.dataset), labels_path = "../datasets/{}/train/labels".format(args.dataset), 
         image_size = 416, 
         augment = True, 
     ), 
     "val":DetImageDataset(
-        images_path = "../datasets/VOC2007/val/images", labels_path = "../datasets/VOC2007/val/labels", 
+        images_path = "../datasets/{}/val/images".format(args.dataset), labels_path = "../datasets/{}/val/labels".format(args.dataset), 
         image_size = 416, 
         augment = False, 
     ), 
@@ -41,10 +45,9 @@ lr_scheduler = optim.lr_scheduler.CosineAnnealingLR(
 
 wandb.login()
 wandb.init(
-    mode = "disabled", 
-    project = "ezdet", name = "yolov3", 
+    project = "ezdet", name = args.dataset, 
 )
-save_ckp_dir = "../ckps/VOC2007"
+save_ckp_dir = "../ckps/{}".format(args.dataset)
 if not os.path.exists(save_ckp_dir):
     os.makedirs(save_ckp_dir)
 train_fn(
