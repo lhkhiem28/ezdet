@@ -13,7 +13,21 @@ class DetImageDataset(torch.utils.data.Dataset):
         self.augment = augment
         self.transforms = A.Compose(
             [
-                A.HorizontalFlip(p = 0.5), 
+                A.HorizontalFlip(
+                    p = 0.5, 
+                ), 
+                A.BBoxSafeRandomCrop(
+                    erosion_rate = 0.2, 
+                    p = 0.5, 
+                ), 
+                A.RandomBrightnessContrast(
+                    brightness_limit = 0.2, contrast_limit = 0.2, 
+                    p = 0.3, 
+                ), 
+                A.RGBShift(
+                    r_shift_limit = 30, g_shift_limit = 30, b_shift_limit = 30, 
+                    p = 0.3, 
+                ), 
             ], 
             A.BboxParams("yolo", ["classes"])
         )
