@@ -13,26 +13,28 @@ datasets = {
         images_path = "../datasets/{}/train/images".format(args.dataset), labels_path = "../datasets/{}/train/labels".format(args.dataset), 
         image_size = 416, 
         augment = True, 
+        multiscale = True, 
     ), 
     "val":DetImageDataset(
         images_path = "../datasets/{}/val/images".format(args.dataset), labels_path = "../datasets/{}/val/labels".format(args.dataset), 
         image_size = 416, 
         augment = False, 
+        multiscale = False, 
     ), 
 }
 train_loaders = {
     "train":torch.utils.data.DataLoader(
         datasets["train"], collate_fn = datasets["train"].collate_fn, 
-        num_workers = 8, batch_size = 32, 
+        num_workers = 8, batch_size = 24, 
         shuffle = True, 
     ), 
     "val":torch.utils.data.DataLoader(
         datasets["val"], collate_fn = datasets["val"].collate_fn, 
-        num_workers = 8, batch_size = 32, 
+        num_workers = 8, batch_size = 24, 
         shuffle = False, 
     ), 
 }
-model = Darknet("nets/yolov3.cfg")
+model = Darknet("pytorchyolo/configs/yolov3.cfg")
 model.load_darknet_weights("../ckps/darknet53.conv.74")
 optimizer = optim.Adam(
     model.parameters(), 
@@ -40,7 +42,7 @@ optimizer = optim.Adam(
 )
 lr_scheduler = optim.lr_scheduler.CosineAnnealingLR(
     optimizer, 
-    eta_min = 0.01*model.hyperparams["lr"], T_max = int(0.9*int(model.hyperparams["num_epochs"])), 
+    eta_min = 0.01*model.hyperparams["lr"], T_max = int(0.92*int(model.hyperparams["num_epochs"])), 
 )
 
 wandb.login()
