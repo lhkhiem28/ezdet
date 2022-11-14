@@ -10,27 +10,27 @@ args = parser.parse_args()
 
 datasets = {
     "train":DetImageDataset(
-        images_path = "../datasets/{}/train/images".format(args.dataset), labels_path = "../datasets/{}/train/labels".format(args.dataset), 
-        image_size = 416, 
-        augment = True, 
-        multiscale = True, 
+        images_path = "../datasets/{}/train/images".format(args.dataset), labels_path = "../datasets/{}/train/labels".format(args.dataset)
+        , image_size = 416
+        , augment = True
+        , multiscale = True
     ), 
     "val":DetImageDataset(
-        images_path = "../datasets/{}/val/images".format(args.dataset), labels_path = "../datasets/{}/val/labels".format(args.dataset), 
-        image_size = 416, 
-        augment = False, 
-        multiscale = False, 
+        images_path = "../datasets/{}/val/images".format(args.dataset), labels_path = "../datasets/{}/val/labels".format(args.dataset)
+        , image_size = 416
+        , augment = False
+        , multiscale = False
     ), 
 }
 train_loaders = {
     "train":torch.utils.data.DataLoader(
         datasets["train"], collate_fn = datasets["train"].collate_fn, 
-        num_workers = 8, batch_size = 24, 
+        num_workers = 8, batch_size = 32, 
         shuffle = True, 
     ), 
     "val":torch.utils.data.DataLoader(
         datasets["val"], collate_fn = datasets["val"].collate_fn, 
-        num_workers = 8, batch_size = 24, 
+        num_workers = 8, batch_size = 32, 
         shuffle = False, 
     ), 
 }

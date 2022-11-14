@@ -4,38 +4,36 @@ from libs import *
 
 class DetImageDataset(torch.utils.data.Dataset):
     def __init__(self, 
-        images_path, labels_path, 
-        image_size = 416, 
-        augment = False, 
-        multiscale = False, 
+        images_path, labels_path
+        , image_size = 416
+        , augment = False
+        , multiscale = False
     ):
-        self.image_files, self.label_files,  = sorted(glob.glob(images_path + "/*")), sorted(glob.glob(labels_path + "/*")), 
+        self.image_files, self.label_files = sorted(glob.glob(images_path + "/*")), sorted(glob.glob(labels_path + "/*"))
         self.image_size = image_size
         self.augment = augment
-        if self.augment:
-            self.transforms = A.Compose(
-                [
-                    A.HorizontalFlip(
-                        p = 0.5, 
-                    ), 
-                    A.BBoxSafeRandomCrop(
-                        erosion_rate = 0.2, 
-                        p = 0.5, 
-                    ), 
-                    A.RandomBrightnessContrast(
-                        brightness_limit = 0.2, contrast_limit = 0.2, 
-                        p = 0.3, 
-                    ), 
-                    A.RGBShift(
-                        r_shift_limit = 30, g_shift_limit = 30, b_shift_limit = 30, 
-                        p = 0.3, 
-                    ), 
-                ], 
-                A.BboxParams("yolo", ["classes"])
-            )
+        self.transforms = A.Compose(
+            [
+                A.HorizontalFlip(
+                    p = 0.5, 
+                ), 
+                A.BBoxSafeRandomCrop(
+                    erosion_rate = 0.2, 
+                    p = 0.5, 
+                ), 
+                A.RandomBrightnessContrast(
+                    brightness_limit = 0.2, contrast_limit = 0.2, 
+                    p = 0.3, 
+                ), 
+                A.RGBShift(
+                    r_shift_limit = 30, g_shift_limit = 30, b_shift_limit = 30, 
+                    p = 0.3, 
+                ), 
+            ], 
+            A.BboxParams("yolo", ["classes"])
+        )
         self.multiscale = multiscale
-        if self.multiscale:
-            self.size_range = [self.image_size + 32*s for s in range(-3, 4)]
+        self.image_sizes = [self.image_size + 32*scale for scale in range(-1, 2)]
 
     def __len__(self, 
     ):
@@ -60,7 +58,7 @@ class DetImageDataset(torch.utils.data.Dataset):
     def __getitem__(self, 
         index, 
     ):
-        image_file, label_file,  = self.image_files[index], self.label_files[index], 
+        image_file, label_file = self.image_files[index], self.label_files[index]
         image = cv2.imread(image_file)
         image = cv2.cvtColor(
             image, 
@@ -92,7 +90,7 @@ class DetImageDataset(torch.utils.data.Dataset):
     ):
         images, labels = list(zip(*batch))
         if self.multiscale and np.random.random() <= 0.1:
-            self.image_size = np.random.choice(self.size_range)
+            self.image_size = np.random.choice(self.image_sizes)
         images = torch.stack([
             F.interpolate(
                 image.unsqueeze(0), 
