@@ -17,7 +17,7 @@ def train_fn(
     best_map = 0
     for epoch in tqdm.tqdm(range(1, num_epochs + 1), disable = training_verbose):
         if training_verbose:
-            print("epoch {:2}/{:2}".format(epoch, num_epochs) + "\n" + "-"*16)
+            print("epoch {:2}/{:2}".format(epoch, num_epochs) + "\n" + " - "*16)
         if epoch <= int(0.08*num_epochs):
             for param_group in optimizer.param_groups:
                 param_group["lr"] = model.hyperparams["lr"]*epoch/(int(0.08*num_epochs))
