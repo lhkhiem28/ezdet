@@ -1,6 +1,13 @@
-/datasets
+datasets/VOC2007/train/images/*
+!datasets/VOC2007/train/images/2007_000005.jpg
+datasets/VOC2007/train/labels/*
+!datasets/VOC2007/train/labels/2007_000005.txt
+datasets/VOC2007/val/images/*
+!datasets/VOC2007/val/images/2007_000001.jpg
+datasets/VOC2007/val/labels/*
+!datasets/VOC2007/val/labels/2007_000001.txt
 
 **/__pycache__
 **/*.out
 **/wandb
-/ckps
+ckps/*
