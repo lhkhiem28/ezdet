@@ -6,8 +6,11 @@ datasets/VOC2007/val/images/*
 !datasets/VOC2007/val/images/2007_000001.jpg
 datasets/VOC2007/val/labels/*
 !datasets/VOC2007/val/labels/2007_000001.txt
+**/*.zip
+ckps/darknet53.conv.74
+ckps/*/*
+!ckps/*/.placeholder
 
 **/__pycache__
 **/*.out
 **/wandb
-ckps/*
